@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aristotle Dashboard</title>
+    <style>
+        :root {
+            --bg: #0a0e1a;
+            --surface: #111827;
+            --surface2: #1a2236;
+            --border: #1e2d45;
+            --accent: #00d4aa;
+            --accent2: #3b82f6;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text: #e2e8f0;
+            --text-muted: #64748b;
+            --approved-bg: rgba(0, 212, 170, 0.07);
+            --broader-bg: rgba(59, 130, 246, 0.07);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, 'SF Pro Text', 'Segoe UI', sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            padding-bottom: 40px;
+        }
+
+        /* HEADER */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 16px 16px;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--accent);
+        }
+
+        .logo span {
+            color: var(--text-muted);
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+
+        .scan-time {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: right;
+        }
+
+        .scan-time strong {
+            color: var(--accent);
+            display: block;
+            font-size: 12px;
+        }
+
+        /* STAT PILLS */
+        .stats-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .stat-pill {
+            flex: 1;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            text-align: center;
+        }
+
+        .stat-pill .val {
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+
+        .stat-pill .lbl {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-pill.total .val { color: var(--warning); }
+        .stat-pill.approved .val { color: var(--accent); }
+        .stat-pill.broader .val { color: var(--accent2); }
+
+        /* TABS */
+        .tab-bar {
+            display: flex;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab {
+            flex-shrink: 0;
+            padding: 12px 18px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            transition: color 0.15s;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+        }
+
+        .tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        /* PANELS */
+        .panel { display: none; padding: 16px; }
+        .panel.active { display: block; }
+
+        /* SECTION HEADERS */
+        .section-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-label.green { color: var(--accent); border-color: rgba(0,212,170,0.2); }
+        .section-label.blue { color: var(--accent2); border-color: rgba(59,130,246,0.2); }
+
+        /* TABLES */
+        .table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 24px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead th {
+            background: var(--surface2);
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 9px 12px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-top: 1px solid var(--border);
+        }
+
+        tbody tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .approved-table tbody tr { background: var(--approved-bg); }
+        .broader-table tbody tr { background: var(--broader-bg); }
+
+        td {
+            padding: 10px 12px;
+            white-space: nowrap;
+        }
+
+        .rank { color: var(--text-muted); font-size: 11px; }
+        .ticker { font-weight: 700; font-size: 14px; color: var(--text); }
+        .drop { font-weight: 700; color: var(--danger); }
+
+        .sector-badge {
+            background: rgba(0,212,170,0.1);
+            color: var(--accent);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .no-signals {
+            color: var(--text-muted);
+            font-style: italic;
+            padding: 16px;
+            text-align: center;
+        }
+
+        /* HISTORY */
+        .history-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .history-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+        }
+
+        .history-card.has-signals {
+            border-color: rgba(0,212,170,0.25);
+        }
+
+        .history-card.no-signal-day {
+            opacity: 0.5;
+        }
+
+        .history-date {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .history-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .history-counts {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .count-pill {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .approved-pill {
+            background: rgba(0,212,170,0.15);
+            color: var(--accent);
+        }
+
+        .broader-pill {
+            background: rgba(59,130,246,0.15);
+            color: var(--accent2);
+        }
+
+        .history-tickers {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .ticker-group strong {
+            color: var(--text);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-top">
+            <div class="logo">ARISTOTLE <span>v2</span></div>
+            <div class="scan-time">
+                <strong>2026-06-09</strong>
+                Last scan: 19:37 UTC
+            </div>
+        </div>
+        <div class="stats-row">
+            <div class="stat-pill total">
+                <div class="val">0</div>
+                <div class="lbl">Total</div>
+            </div>
+            <div class="stat-pill approved">
+                <div class="val">0</div>
+                <div class="lbl">Approved</div>
+            </div>
+            <div class="stat-pill broader">
+                <div class="val">0</div>
+                <div class="lbl">Broader</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-bar">
+        <button class="tab active" onclick="showTab('today')">Today</button>
+        <button class="tab" onclick="showTab('history')">30-Day History</button>
+    </div>
+
+    <!-- TODAY PANEL -->
+    <div id="panel-today" class="panel active">
+
+        <p class="section-label green">✅ Approved Stocks — 0 signal(s)</p>
+        <div class="table-wrap">
+            <table class="approved-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Ticker</th>
+                        <th>Sector</th>
+                        <th>Price</th>
+                        <th>20D High</th>
+                        <th>Drop</th>
+                        <th>Vol Ratio</th>
+                    </tr>
+                </thead>
+                <tbody><tr><td colspan="7" class="no-signals">No signals from approved stocks today</td></tr></tbody>
+            </table>
+        </div>
+
+        <p class="section-label blue">🌍 Broader Market — 0 signal(s)</p>
+        <div class="table-wrap">
+            <table class="broader-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Ticker</th>
+                        <th>Price</th>
+                        <th>20D High</th>
+                        <th>Drop</th>
+                        <th>Vol Ratio</th>
+                    </tr>
+                </thead>
+                <tbody><tr><td colspan="6" class="no-signals">No signals from broader market today</td></tr></tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- HISTORY PANEL -->
+    <div id="panel-history" class="panel">
+        <p class="section-label">📅 Last 30 Days</p>
+        <div class="history-grid">
+            
+        <div class="history-card no-signal-day">
+            <div class="history-date">2026-06-09</div>
+            <div class="history-meta">19:37 UTC</div>
+            <div class="history-counts">
+                <span class="count-pill approved-pill">0 approved</span>
+                <span class="count-pill broader-pill">0 broader</span>
+            </div>
+            <div class="history-tickers">
+                <div class="ticker-group"><strong>Approved:</strong> —</div>
+                <div class="ticker-group"><strong>Broader:</strong> —</div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(name) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('panel-' + name).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+
+</body>
+</html>
