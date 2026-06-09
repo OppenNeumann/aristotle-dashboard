@@ -156,7 +156,8 @@ def download_stock_data(tickers, days_back=30):
                 if i % 20 == 0:
                     print(f"  Progress: {i}/{len(tickers)}...")
                 df = yf.download(ticker, start=start_date, end=end_date,
-                                progress=False, show_errors=False)
+                progress=False, auto_adjust=True, 
+                show_errors=False, multi_level_index=False)
                 if hasattr(df.index, 'tz') and df.index.tz is not None:
                     df.index = df.index.tz_localize(None)
                 if not df.empty and len(df) >= 20:

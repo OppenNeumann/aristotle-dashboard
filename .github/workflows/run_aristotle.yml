@@ -26,7 +26,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install yfinance pandas
+          pip install yfinance==0.2.54 pandas
 
       - name: Run Aristotle scanner
         env:
