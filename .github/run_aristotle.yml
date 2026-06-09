@@ -1,0 +1,43 @@
+name: Run Aristotle Daily Scanner
+
+on:
+  schedule:
+    # Runs weekdays at 21:30 UTC = 4:30 PM ET (after market close)
+    - cron: '30 21 * * 1-5'
+  workflow_dispatch:  # Allows manual trigger from GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install yfinance pandas
+
+      - name: Run Aristotle scanner
+        env:
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+        run: python Aristotle_v2.py
+
+      - name: Commit updated dashboard and history
+        run: |
+          git config user.name "Aristotle Bot"
+          git config user.email "actions@github.com"
+          git add dashboard.html history.json
+          git diff --staged --quiet || git commit -m "📊 Daily scan: $(date +'%Y-%m-%d')"
+          git push

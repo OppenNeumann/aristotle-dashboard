@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aristotle Dashboard — Setup Guide</title>
+<style>
+  body { font-family: -apple-system, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 20px; color: #1a1a2e; line-height: 1.7; }
+  h1 { color: #00b894; font-size: 26px; margin-bottom: 4px; }
+  h2 { font-size: 16px; margin-top: 36px; margin-bottom: 8px; color: #0984e3; border-left: 3px solid #0984e3; padding-left: 10px; }
+  .step { background: #f8f9fa; border-radius: 10px; padding: 18px 20px; margin-bottom: 16px; border: 1px solid #e0e0e0; }
+  .step-num { font-size: 11px; font-weight: 700; color: #00b894; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  code { background: #2d3436; color: #00cec9; padding: 2px 7px; border-radius: 4px; font-size: 13px; }
+  pre { background: #2d3436; color: #dfe6e9; padding: 14px 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; line-height: 1.6; }
+  .note { background: #fff3cd; border-left: 3px solid #f59e0b; padding: 10px 14px; border-radius: 6px; font-size: 13px; margin: 12px 0; }
+  .done { background: #d4edda; border-left: 3px solid #00b894; padding: 10px 14px; border-radius: 6px; font-size: 13px; margin: 12px 0; }
+  a { color: #0984e3; }
+  ul { padding-left: 20px; }
+  li { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<h1>🎯 Aristotle Dashboard</h1>
+<p>Setup guide — follow these steps once and you're done forever.</p>
+
+<h2>What you'll end up with</h2>
+<ul>
+  <li>A dashboard at <strong>https://[your-username].github.io/aristotle-dashboard</strong></li>
+  <li>Code runs automatically every weekday at 4:30 PM ET (after market close)</li>
+  <li>Shows today's signals + 30 days of history</li>
+  <li>Works on your iPhone from anywhere, no laptop needed</li>
+</ul>
+
+<h2>Part 1 — Create a GitHub Account</h2>
+
+<div class="step">
+  <div class="step-num">Step 1</div>
+  Go to <a href="https://github.com" target="_blank">github.com</a> and click <strong>Sign up</strong>. Use any email. Your username will appear in your dashboard URL — something like <code>josephnunes</code> or <code>joe-nunes</code> is fine.
+</div>
+
+<div class="step">
+  <div class="step-num">Step 2</div>
+  Once signed in, click the <strong>+</strong> icon (top right) → <strong>New repository</strong>.
+  <ul style="margin-top:10px">
+    <li>Name it: <code>aristotle-dashboard</code></li>
+    <li>Set to <strong>Public</strong> (required for free GitHub Pages)</li>
+    <li>Leave everything else as default</li>
+    <li>Click <strong>Create repository</strong></li>
+  </ul>
+</div>
+
+<h2>Part 2 — Install Git on your Mac</h2>
+
+<div class="step">
+  <div class="step-num">Step 3</div>
+  Open <strong>Terminal</strong> (search "Terminal" in Spotlight). Run:
+  <pre>git --version</pre>
+  If it prints a version number, Git is already installed — skip to Step 4.<br><br>
+  If not, macOS will prompt you to install Xcode Command Line Tools. Click Install and wait (~5 mins).
+</div>
+
+<div class="step">
+  <div class="step-num">Step 4</div>
+  Configure Git with your name and email (one-time setup):
+  <pre>git config --global user.name "Joseph Nunes"
+git config --global user.email "your-github-email@example.com"</pre>
+</div>
+
+<h2>Part 3 — Upload the files</h2>
+
+<div class="step">
+  <div class="step-num">Step 5</div>
+  Copy the <code>aristotle-dashboard</code> folder (from the files delivered to you) to your Documents folder. You should have this structure:
+  <pre>aristotle-dashboard/
+├── Aristotle_v2.py
+├── history.json
+├── index.html
+├── README.md
+└── .github/
+    └── workflows/
+        └── run_aristotle.yml</pre>
+  <div class="note">⚠️ The <code>.github</code> folder starts with a dot — make sure it's included. On Mac, press <strong>Cmd+Shift+.</strong> in Finder to show hidden files.</div>
+</div>
+
+<div class="step">
+  <div class="step-num">Step 6</div>
+  In Terminal, navigate to the folder and push it to GitHub. Replace <code>josephnunes</code> with your actual GitHub username:
+  <pre>cd ~/Documents/aristotle-dashboard
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/josephnunes/aristotle-dashboard.git
+git push -u origin main</pre>
+  GitHub will ask for your username and password. For the password, use a <strong>Personal Access Token</strong> (see Step 7).
+</div>
+
+<div class="step">
+  <div class="step-num">Step 7 — GitHub Personal Access Token</div>
+  GitHub no longer accepts your account password for Git. You need a token:
+  <ul style="margin-top:10px">
+    <li>Go to <a href="https://github.com/settings/tokens/new" target="_blank">github.com/settings/tokens/new</a></li>
+    <li>Note: <code>Aristotle push</code></li>
+    <li>Expiration: <code>No expiration</code></li>
+    <li>Tick <strong>repo</strong> scope</li>
+    <li>Click <strong>Generate token</strong></li>
+    <li>Copy the token (starts with <code>ghp_</code>) — you only see it once</li>
+  </ul>
+  Use this token as the "password" when Terminal asks during Step 6.
+</div>
+
+<h2>Part 4 — Add your email credentials as Secrets</h2>
+
+<div class="step">
+  <div class="step-num">Step 8</div>
+  Your Gmail credentials need to be stored securely in GitHub (never in the code):
+  <ul style="margin-top:10px">
+    <li>Go to your repo on GitHub → <strong>Settings</strong> → <strong>Secrets and variables</strong> → <strong>Actions</strong></li>
+    <li>Click <strong>New repository secret</strong></li>
+    <li>Add two secrets:</li>
+  </ul>
+  <pre>Name: SMTP_USERNAME
+Value: reactive.saturday@gmail.com
+
+Name: SMTP_PASSWORD
+Value: pnjt mzck ktdg sflw</pre>
+</div>
+
+<h2>Part 5 — Enable GitHub Pages</h2>
+
+<div class="step">
+  <div class="step-num">Step 9</div>
+  <ul>
+    <li>In your repo → <strong>Settings</strong> → <strong>Pages</strong></li>
+    <li>Under <strong>Source</strong>, select <strong>Deploy from a branch</strong></li>
+    <li>Branch: <strong>main</strong>, folder: <strong>/ (root)</strong></li>
+    <li>Click <strong>Save</strong></li>
+  </ul>
+  After ~60 seconds your site will be live at:<br>
+  <strong>https://[your-username].github.io/aristotle-dashboard</strong>
+</div>
+
+<h2>Part 6 — Test it manually</h2>
+
+<div class="step">
+  <div class="step-num">Step 10</div>
+  Don't wait until 4:30 PM ET — trigger a manual run now to check everything works:
+  <ul style="margin-top:10px">
+    <li>Go to your repo → <strong>Actions</strong> tab</li>
+    <li>Click <strong>Run Aristotle Daily Scanner</strong> (left sidebar)</li>
+    <li>Click <strong>Run workflow</strong> → <strong>Run workflow</strong></li>
+    <li>Watch the run — it takes about 3–5 minutes</li>
+    <li>When it shows a green tick, visit your GitHub Pages URL</li>
+  </ul>
+</div>
+
+<h2>Part 7 — Add to iPhone home screen</h2>
+
+<div class="step">
+  <div class="step-num">Step 11</div>
+  On your iPhone:
+  <ul style="margin-top:10px">
+    <li>Open Safari and go to your dashboard URL</li>
+    <li>Tap the <strong>Share</strong> button (box with arrow)</li>
+    <li>Tap <strong>Add to Home Screen</strong></li>
+    <li>Name it <code>Aristotle</code> → tap <strong>Add</strong></li>
+  </ul>
+  It now sits on your home screen like an app. Tap it anytime to see the latest signals.
+</div>
+
+<div class="done">
+  ✅ <strong>That's it.</strong> The scanner will now run every weekday at 4:30 PM ET automatically, update your dashboard, and you'll be able to check it from anywhere on your iPhone.
+</div>
+
+<h2>Ongoing workflow</h2>
+<ul>
+  <li>Each day after US market close, GitHub runs the script automatically</li>
+  <li>Tap the home screen icon to see today's signals</li>
+  <li>Swipe to the History tab to see the last 30 days</li>
+  <li>To update the strategy or dashboard design, edit the files and push: <code>git add . && git commit -m "update" && git push</code></li>
+</ul>
+
+</body>
+</html>
