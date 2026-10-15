@@ -1,5 +1,11 @@
 [
   {
+    "date": "2026-10-15",
+    "scan_time": "00:04 UTC",
+    "approved": [],
+    "broader": []
+  },
+  {
     "date": "2026-10-14",
     "scan_time": "00:32 UTC",
     "approved": [],
