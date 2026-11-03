@@ -1,5 +1,11 @@
 [
   {
+    "date": "2026-11-03",
+    "scan_time": "03:03 UTC",
+    "approved": [],
+    "broader": []
+  },
+  {
     "date": "2026-10-31",
     "scan_time": "01:00 UTC",
     "approved": [],
@@ -104,24 +110,6 @@
   {
     "date": "2026-10-06",
     "scan_time": "01:53 UTC",
-    "approved": [],
-    "broader": []
-  },
-  {
-    "date": "2026-10-03",
-    "scan_time": "00:40 UTC",
-    "approved": [],
-    "broader": []
-  },
-  {
-    "date": "2026-10-02",
-    "scan_time": "01:04 UTC",
-    "approved": [],
-    "broader": []
-  },
-  {
-    "date": "2026-10-01",
-    "scan_time": "00:45 UTC",
     "approved": [],
     "broader": []
   }
